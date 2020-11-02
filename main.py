@@ -8,9 +8,9 @@ np.random.seed(1)
 inputsize = 8
 hiddenlayersize = 3
 outputsize = inputsize
-weightinitialisation = 0.1
-learningrate = 0.05
-
+weightinitialisation = 0.5
+learningrate = 75
+reglambda = 0.0001
 
 weights2 = np.random.randn(hiddenlayersize, inputsize) * weightinitialisation
 bias2 = np.random.randn(hiddenlayersize, 1) * weightinitialisation
@@ -29,12 +29,11 @@ testinput = np.identity(inputsize, dtype=int)
 # testinput = np.array([[1,0,0,0,0,0,0,0], [0,0,1,0,0,0,0,0], [0,0,0,0,0,1,0,0], [0,1,0,0,0,0,0,0]]).T
 
 
-
 costhistory = []
 weightsumhistory = []
 accuracyhistory = []
 
-epochs = 100
+epochs = 2000
 a1 = testinput
 for epoch in range(0, epochs):
 
@@ -55,11 +54,11 @@ for epoch in range(0, epochs):
     DELTA2 = np.dot(delta2, a1.T)
     # dz2 = -(np.multiply(testinput, np.log(a2))  + np.multiply((1 - testinput), np.log(1 - a2)))
 
-    dweights3 = DELTA3 / m
-    dbias3 = np.sum(delta3, axis=1, keepdims=True) / m
+    dweights3 = (DELTA3 + reglambda * weights3) / m
+    dbias3 = (np.sum(delta3, axis=1, keepdims=True) + reglambda*bias3) / m
 
-    dweights2 = DELTA2 / m
-    dbias2 = np.sum(delta2, axis=1, keepdims=True) / m
+    dweights2 = (DELTA2 + reglambda * weights2) / m
+    dbias2 = (np.sum(delta2, axis=1, keepdims=True) + reglambda * bias2) / m
 
     # delta's calculated: now updating weights.
 
@@ -82,6 +81,6 @@ for epoch in range(0, epochs):
     accuracyhistory.append(amountcorrect)
 
 t = range(0, epochs)
-plot = plt.plot(t, costhistory, 'b')  # , t, weightsumhistory, 'r', t, accuracyhistory, 'g')
+plot = plt.plot(t, costhistory, 'b', t, weightsumhistory, 'r', t, accuracyhistory, 'g')
 plt.show()
 print(a3)
